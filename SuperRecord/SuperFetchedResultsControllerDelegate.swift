@@ -31,6 +31,7 @@ class SuperFetchedResultsControllerDelegate : NSObject, NSFetchedResultsControll
     
     var objectChanges : Array<Dictionary<NSFetchedResultsChangeType,AnyObject>> = Array()
     var sectionChanges : Array<Dictionary<NSFetchedResultsChangeType,Int>> = Array()
+    var delegate: NSFetchedResultsControllerDelegate?
     
     let kOwnerKey: String = "kOwnerKey"
     weak var owner : AnyObject?
@@ -217,5 +218,9 @@ class SuperFetchedResultsControllerDelegate : NSObject, NSFetchedResultsControll
         }
         sectionChanges.removeAll(keepCapacity: false)
         objectChanges.removeAll(keepCapacity: false)
+        
+        if let del = delegate {
+            del.controllerDidChangeContent!(controller)
+        }
     }
 }

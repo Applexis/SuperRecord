@@ -61,7 +61,11 @@ public extension NSFetchedResultsController {
     }
     
     class func superFetchedResultsController(entityName: NSString!, sectionNameKeyPath: NSString?, sortDescriptors: NSArray?, predicate: NSPredicate?, tableView: UITableView!, context: NSManagedObjectContext!) -> NSFetchedResultsController {
-        let fetchedResultsDelegate = setupFetchedResultsControllerDelegate(tableView)
+        return superFetchedResultsController(entityName, sectionNameKeyPath: sectionNameKeyPath, sortDescriptors: sortDescriptors, predicate: predicate, tableView: tableView, context: context, extraDelegate: nil)
+    }
+    
+    class func superFetchedResultsController(entityName: NSString!, sectionNameKeyPath: NSString?, sortDescriptors: NSArray?, predicate: NSPredicate?, tableView: UITableView!, context: NSManagedObjectContext!, extraDelegate: NSFetchedResultsControllerDelegate?) -> NSFetchedResultsController {
+        let fetchedResultsDelegate = setupFetchedResultsControllerDelegate(tableView, extraDelegate: extraDelegate)
         let fetchedResultsController = superFetchedResultsController(entityName, sectionNameKeyPath: sectionNameKeyPath, sortDescriptors: sortDescriptors, predicate: predicate, delegate: fetchedResultsDelegate, context: context)
         fetchedResultsDelegate.bindsLifetimeTo(fetchedResultsController)
         return fetchedResultsController
@@ -71,7 +75,14 @@ public extension NSFetchedResultsController {
     // MARK: Private Methods
     
     private class func setupFetchedResultsControllerDelegate(tableView: UITableView!) -> SuperFetchedResultsControllerDelegate {
+        return setupFetchedResultsControllerDelegate(tableView, extraDelegate: nil)
+    }
+    
+    private class func setupFetchedResultsControllerDelegate(tableView: UITableView!, extraDelegate: NSFetchedResultsControllerDelegate?) -> SuperFetchedResultsControllerDelegate {
         let fetchedResultsDelegate = SuperFetchedResultsControllerDelegate()
+        if let del = extraDelegate {
+            fetchedResultsDelegate.delegate = del
+        }
         weak var weakTableView = tableView
         let reusableView: UITableView! = weakTableView
         fetchedResultsDelegate.tableView = reusableView
