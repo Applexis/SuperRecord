@@ -219,8 +219,6 @@ class SuperFetchedResultsControllerDelegate : NSObject, NSFetchedResultsControll
         sectionChanges.removeAll(keepCapacity: false)
         objectChanges.removeAll(keepCapacity: false)
         
-        if let del = delegate {
-            del.controllerDidChangeContent!(controller)
-        }
+        delegate?.controllerDidChangeContent?(controller)
     }
 }
