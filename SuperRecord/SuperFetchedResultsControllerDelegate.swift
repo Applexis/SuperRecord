@@ -31,7 +31,7 @@ class SuperFetchedResultsControllerDelegate : NSObject, NSFetchedResultsControll
     
     var objectChanges : Array<Dictionary<NSFetchedResultsChangeType,AnyObject>> = Array()
     var sectionChanges : Array<Dictionary<NSFetchedResultsChangeType,Int>> = Array()
-    var delegate: NSFetchedResultsControllerDelegate?
+    var delegate: APXFetchedResultsControllerDelegate?
     
     let kOwnerKey: String = "kOwnerKey"
     weak var owner : AnyObject?
@@ -127,7 +127,7 @@ class SuperFetchedResultsControllerDelegate : NSObject, NSFetchedResultsControll
             case NSFetchedResultsChangeType.Delete:
                 tableView!.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
             case NSFetchedResultsChangeType.Update:
-                tableView!.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
+                delegate?.configureCell?(tableView?.cellForRowAtIndexPath(newIndexPath), atIndexPath: newIndexPath)
             case NSFetchedResultsChangeType.Move:
                 tableView!.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
                 tableView!.insertRowsAtIndexPaths([newIndexPath], withRowAnimation: UITableViewRowAnimation.Fade)
