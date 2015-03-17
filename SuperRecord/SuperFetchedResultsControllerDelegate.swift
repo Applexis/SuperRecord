@@ -127,7 +127,7 @@ class SuperFetchedResultsControllerDelegate : NSObject, NSFetchedResultsControll
             case NSFetchedResultsChangeType.Delete:
                 tableView!.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
             case NSFetchedResultsChangeType.Update:
-                delegate?.configureCell?(tableView?.cellForRowAtIndexPath(newIndexPath), atIndexPath: newIndexPath)
+                delegate?.configureCell?(tableView?.cellForRowAtIndexPath(indexPath), atIndexPath: indexPath)
             case NSFetchedResultsChangeType.Move:
                 tableView!.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
                 tableView!.insertRowsAtIndexPaths([newIndexPath], withRowAnimation: UITableViewRowAnimation.Fade)
