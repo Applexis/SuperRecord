@@ -78,7 +78,7 @@ class SuperFetchedResultsControllerDelegate : NSObject, NSFetchedResultsControll
         ownerArray?.addObject(self)
         
         if(oldOwner != nil){
-            var oldOwnerArray : NSMutableArray = objc_getAssociatedObject(oldOwner, kOwnerKey) as NSMutableArray;
+            var oldOwnerArray : NSMutableArray = objc_getAssociatedObject(oldOwner, kOwnerKey) as! NSMutableArray;
             oldOwnerArray.removeObjectIdenticalTo(self)
         }
     }
@@ -118,19 +118,19 @@ class SuperFetchedResultsControllerDelegate : NSObject, NSFetchedResultsControll
         }
     }
 
-    func controller(controller: NSFetchedResultsController!, didChangeObject anObject: AnyObject!, atIndexPath indexPath: NSIndexPath!, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath!)
+    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?)
     {
         if(receiverType() == ReusableViewType.TableView){
             switch type {
             case NSFetchedResultsChangeType.Insert:
-                tableView!.insertRowsAtIndexPaths([newIndexPath], withRowAnimation: UITableViewRowAnimation.Fade)
+                tableView!.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: UITableViewRowAnimation.Fade)
             case NSFetchedResultsChangeType.Delete:
-                tableView!.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
+                tableView!.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: UITableViewRowAnimation.Fade)
             case NSFetchedResultsChangeType.Update:
-                delegate?.configureCell?(tableView?.cellForRowAtIndexPath(indexPath), atIndexPath: indexPath)
+                delegate?.configureCell?(tableView?.cellForRowAtIndexPath(indexPath!), atIndexPath: indexPath)
             case NSFetchedResultsChangeType.Move:
-                tableView!.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
-                tableView!.insertRowsAtIndexPaths([newIndexPath], withRowAnimation: UITableViewRowAnimation.Fade)
+                tableView!.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: UITableViewRowAnimation.Fade)
+                tableView!.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: UITableViewRowAnimation.Fade)
             default:
                 println("Unexpected NSFetchedResultsChangeType received for didChangeObject. \(type)")
             }
@@ -149,7 +149,7 @@ class SuperFetchedResultsControllerDelegate : NSObject, NSFetchedResultsControll
                 break;
             case NSFetchedResultsChangeType.Move:
                 // !TODO : we may need to migrate this to a homogenous Array as I expect this to throw a runtime exception.
-                changeDictionary[type] = [indexPath, newIndexPath]
+                changeDictionary[type] = [indexPath!, newIndexPath!]
                 break;
             default:
                 println("Unexpected NSFetchedResultsChangeType received for didChangeObject. \(type)")
@@ -158,7 +158,7 @@ class SuperFetchedResultsControllerDelegate : NSObject, NSFetchedResultsControll
         }
     }
 
-    func controllerDidChangeContent(controller: NSFetchedResultsController!)
+    func controllerDidChangeContent(controller: NSFetchedResultsController)
     {
         if(receiverType() == ReusableViewType.TableView){
             tableView!.endUpdates()
@@ -205,7 +205,7 @@ class SuperFetchedResultsControllerDelegate : NSObject, NSFetchedResultsControll
                                     self.collectionView!.reloadItemsAtIndexPaths([dictValue])
                                     break;
                                 case NSFetchedResultsChangeType.Move:
-                                    self.collectionView!.moveItemAtIndexPath(dictValue[0] as NSIndexPath, toIndexPath: dictValue[1] as NSIndexPath)
+                                    self.collectionView!.moveItemAtIndexPath(dictValue[0] as! NSIndexPath, toIndexPath: dictValue[1] as! NSIndexPath)
                                     break;
                                 default:
                                 println("Unexpected NSFetchedResultsChangeType stored for controllerDidChangeContent. \(dictKey)")

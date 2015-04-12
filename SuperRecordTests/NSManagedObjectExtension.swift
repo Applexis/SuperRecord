@@ -25,10 +25,10 @@ class NSManagedObjectExtension: SuperRecordTestCase {
     
     func testCreateNewEntity() {
 
-        let fireType = Type.createNewEntity(context: managedObjectContext) as Type;
+        let fireType = Type.createNewEntity(context: managedObjectContext) as! Type;
         fireType.name = "Fire";
     
-        let Charizard = Pokemon.createNewEntity(context: managedObjectContext) as Pokemon;
+        let Charizard = Pokemon.createNewEntity(context: managedObjectContext) as! Pokemon;
 
         Charizard.id = PokemonID.Charizard.rawValue
         Charizard.name = PokemonName.Charizard.rawValue
@@ -45,7 +45,7 @@ class NSManagedObjectExtension: SuperRecordTestCase {
             XCTAssertEqual(result.count, 1,  "Should contains 1 pokemon");
         })
         
-        let Charmender = Pokemon.createNewEntity(context: managedObjectContext) as Pokemon;
+        let Charmender = Pokemon.createNewEntity(context: managedObjectContext) as! Pokemon;
         expectation = expectationWithDescription("Charmender Creation")
         Charmender.id = PokemonID.Charmender.rawValue
         Charmender.name = PokemonName.Charmender.rawValue
@@ -84,13 +84,13 @@ class NSManagedObjectExtension: SuperRecordTestCase {
         let charizardExpectation = expectationWithDescription("Charizard creation")
         let anotherCharizard  = Pokemon.findFirstOrCreateWithAttribute("name", value: "Charizard", context: managedObjectContext, handler:{error in
             charizardExpectation.fulfill()
-        }) as Pokemon
+        }) as! Pokemon
         
         waitForExpectationsWithTimeout(SuperRecordTestCaseTimeout, handler: { error in
             XCTAssertEqual(Charizard, anotherCharizard, "Pokemon should be equals");
         })
         
-        let Charmender  = Pokemon.findFirstOrCreateWithAttribute("name", value: "Charmender", context: managedObjectContext) as Pokemon;
+        let Charmender  = Pokemon.findFirstOrCreateWithAttribute("name", value: "Charmender", context: managedObjectContext) as! Pokemon;
 
         XCTAssertNotNil(Charmender, "Pokemon should be not nil")
         XCTAssertNotEqual(Charizard, Charmender, "Pokemon should mismatch")
@@ -107,7 +107,7 @@ class NSManagedObjectExtension: SuperRecordTestCase {
         let charizardExpectation = expectationWithDescription("Charizard creation")
         let anotherCharizard  = Pokemon.findFirstOrCreateWithPredicate(predicate, context: managedObjectContext, handler:{error in
             charizardExpectation.fulfill()
-        }) as Pokemon
+        }) as! Pokemon
         
         waitForExpectationsWithTimeout(SuperRecordTestCaseTimeout, handler: { error in
             XCTAssertEqual(Charizard, anotherCharizard, "Pokemon should be equals");
@@ -121,7 +121,7 @@ class NSManagedObjectExtension: SuperRecordTestCase {
 
         let Charmender  = Pokemon.findFirstOrCreateWithPredicate(charmenderPredicate, context: managedObjectContext, handler:{error in
             charmenderExpectation.fulfill();
-        }) as Pokemon;
+        }) as! Pokemon;
         
         waitForExpectationsWithTimeout(SuperRecordTestCaseTimeout, handler: { error in
             XCTAssertNotNil(Charmender, "Pokemon should be not nil")
@@ -153,14 +153,24 @@ class NSManagedObjectExtension: SuperRecordTestCase {
     
     func testFindAllWithAttribute(){
         let fireType = PokemonFactory.createType(managedObjectContext, id: .Fire, name: .Fire)
+        let waterType = PokemonFactory.createType(managedObjectContext, id: .Water, name: .Water)
+
 
         let charmender = PokemonFactory.createPokemon(managedObjectContext, id: .Charmender, name: .Charmender, level: 1, type: fireType);
         let charmeleon = PokemonFactory.createPokemon(managedObjectContext, id: .Charmeleon, name: .Charmeleon, level: 16, type: fireType);
         let charizard  = PokemonFactory.createPokemon(managedObjectContext, id: .Charizard, name: .Charizard, level: 36, type: fireType);
+        let Blastoise = PokemonFactory.createPokemon(managedObjectContext, id: .Blastoise, name: .Blastoise, level: 36, type: waterType)
 
         
         var pokemons = Pokemon.findAllWithAttribute("name", value: charizard.name, context: managedObjectContext)
         XCTAssertEqual(1, pokemons.count, "Should contains 1 pokemons");
+        
+        pokemons = Pokemon.findAllWithAttribute("type", value: fireType, context: managedObjectContext)
+        XCTAssertEqual(3, pokemons.count, "Should contains 1 pokemons");
+        
+        pokemons = Pokemon.findAllWithAttribute("type.name", value: fireType.name, context: managedObjectContext)
+        XCTAssertEqual(3, pokemons.count, "Should contains 1 pokemons");
+
 
     }
     
@@ -225,13 +235,13 @@ class NSManagedObjectExtension: SuperRecordTestCase {
         XCTAssertEqual(4, Pokemon.count(context: managedObjectContext, predicate: nil, error: nil), "Count mismatch")
         var levelPredicate = NSPredicate(format: "level > 6");
         
-        XCTAssertEqual(3, Pokemon.count(context: managedObjectContext, predicate: levelPredicate!,  error: nil), "Count mismatch")
+        XCTAssertEqual(3, Pokemon.count(context: managedObjectContext, predicate: levelPredicate,  error: nil), "Count mismatch")
         
         levelPredicate = NSPredicate(format: "level > 36");
-        XCTAssertEqual(0, Pokemon.count(context: managedObjectContext, predicate: levelPredicate!,  error: nil), "Count mismatch")
+        XCTAssertEqual(0, Pokemon.count(context: managedObjectContext, predicate: levelPredicate,  error: nil), "Count mismatch")
         
         var typePredicate = NSPredicate(format: "%K = %@", "type", fireType);
-        XCTAssertEqual(3, Pokemon.count(context: managedObjectContext, predicate: typePredicate!,  error: nil),  "Count mismatch")
+        XCTAssertEqual(3, Pokemon.count(context: managedObjectContext, predicate: typePredicate,  error: nil),  "Count mismatch")
 
     }
     
