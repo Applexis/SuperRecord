@@ -85,7 +85,7 @@ class SuperFetchedResultsControllerDelegate : NSObject, NSFetchedResultsControll
     
     // !MARK : Reusable View Updates (UICollectionView / UITableView)
     
-    func controllerWillChangeContent(controller: NSFetchedResultsController!)
+    func controllerWillChangeContent(controller: NSFetchedResultsController)
     {
         if(receiverType() == ReusableViewType.TableView){
             tableView!.beginUpdates()
@@ -94,7 +94,7 @@ class SuperFetchedResultsControllerDelegate : NSObject, NSFetchedResultsControll
         }
     }
     
-    func controller(controller: NSFetchedResultsController!, didChangeSection sectionInfo: NSFetchedResultsSectionInfo!, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType)
+    func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType)
     {
         if(receiverType() == .TableView){
             if type == NSFetchedResultsChangeType.Insert {
